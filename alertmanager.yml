@@ -1,0 +1,17 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'telegram'
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: '7648017625:AAEu2_kgekUG2wMPx_Ez3icR4CsWUOwuA-4'
+        chat_id: 1547317689
+        message: |
+          🔔 Alert: {{ .CommonLabels.alertname }}
+          🔹 Severity: {{ .CommonLabels.severity }}
+          📍 Instance: {{ .CommonLabels.instance }}
+          📝 Description: {{ .CommonAnnotations.description }}
+        parse_mode: "Markdown"
