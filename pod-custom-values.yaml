@@ -1,0 +1,17 @@
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: "telegram"
+    receivers:
+      - name: "telegram"
+        telegram_configs:
+          - bot_token: "YOUR_BOT_TOKEN" 
+            chat_id: YOUR_CHAT_ID        
+            message: |
+              🚨 *Alert:* {{ .CommonLabels.alertname }}
+              🔹 *Severity:* {{ .CommonLabels.severity }}
+              📍 *Instance:* {{ .CommonLabels.instance }}
+              📝 *Description:* {{ .CommonAnnotations.description }}
+            parse_mode: "Markdown"
