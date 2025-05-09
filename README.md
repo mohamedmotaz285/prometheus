@@ -22,3 +22,17 @@ kubectl port-forward -n monitoring svc/prometheus-stack-grafana 3000:80
 
 
 http://localhost:3000
+
+
+
+
+------------
+
+helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -f custom-values.yaml -n monitoring
+
+
+
+kubectl port-forward svc/prometheus-stack-alertmanager 9093:9093 -n monitoring
+
+
+http://localhost:9093
