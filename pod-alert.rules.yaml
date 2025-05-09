@@ -1,0 +1,30 @@
+groups:
+  - name: basic_alerts
+    rules:
+
+    - alert: PodDown
+      expr: kube_pod_status_phase{phase="Failed"} > 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "🔥 Pod is down"
+        description: "A pod is in Failed state for more than 1 minute."
+
+    - alert: PodPendingTooLong
+      expr: kube_pod_status_phase{phase="Pending"} > 0
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "⌛ Pod is still Pending"
+        description: "A pod has been in Pending state for more than 2 minutes."
+
+    - alert: HighPodCPU
+      expr: rate(container_cpu_usage_seconds_total[2m]) > 0.8
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "💥 High CPU usage by Pod"
+        description: "A pod is using more than 80% CPU for more than 2 minutes."
