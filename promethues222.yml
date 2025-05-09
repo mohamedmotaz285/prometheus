@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - "alert.rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - "localhost:9093"
+
+scrape_configs:
+  - job_name: "node_exporters"
+    static_configs:
+      - targets:
+          - "10.0.1.10:9100"
+          - "10.0.1.11:9100"
+          - "10.0.1.12:9100"
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets:
+          - "localhost:9090"
+  
+  - job_name: "node_exporter_dynamic"
+    ec2_sd_configs:
+      - region: eu-central-1
+        port: 9100
+        access_key: YOUR_AWS_ACCESS_KEY
+        secret_key: YOUR_AWS_SECRET_KEY
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: node.*
+        action: keep
