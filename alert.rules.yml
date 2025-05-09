@@ -1,0 +1,48 @@
+groups:
+  - name: basic_alerts
+    rules:
+
+    - alert: NodeDown
+      expr: up == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "🔴 {{ $labels.instance }} is down"
+        description: "Prometheus can't reach the node {{ $labels.instance }} for more than 1 minute."
+
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "🔥 High CPU usage on {{ $labels.instance }}"
+        description: "CPU usage is over 85% for more than 2 minutes."
+
+    - alert: HighMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "💾 High Memory usage on {{ $labels.instance }}"
+        description: "RAM usage is over 90%."
+
+    - alert: LowDiskSpace
+      expr: (node_filesystem_size_bytes{fstype!="tmpfs",mountpoint!="/run"} - node_filesystem_free_bytes{fstype!="tmpfs",mountpoint!="/run"}) / node_filesystem_size_bytes{fstype!="tmpfs",mountpoint!="/run"} > 0.85
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "💽 Low disk space on {{ $labels.instance }}"
+        description: "Disk usage is over 85%."
+
+    - alert: PrometheusNoTargets
+      expr: absent(up)
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "🛑 Prometheus has no targets"
+        description: "Prometheus is not scraping any targets. Something might be wrong."
